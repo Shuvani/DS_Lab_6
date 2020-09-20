@@ -59,23 +59,19 @@ class ClientThread(threading.Thread):
         self.conn.close()
         print(self.name + ' disconnected')
 
-# создадим socket
+# create socket
 sock = socket.socket()
 
 # определимся с хостом и портом - строка хоста пустая чтобы сервер был доступен все интерфейсам
 sock.bind(('', 8800))
 
-# подключиться может не более 4 клиентов
+# server can work only with four clients in a time - because I want such constraint. It can be easily changed
 while len(clients) < 4:
-    # запустим режим прослушивания
+    # star listening
     sock.listen()
     print("\nListening for incoming connections...")
-    # принимаем подключение клиента - создаем новый сокет и получаем адрес клиента и добавляем имя клиента
+    # accept client - get client address and add name
     conn, addr = sock.accept()
     name = 'user' + str(len(clients)+1)
-    # создаем для клиента новый поток
+    # create new thread for the client
     newclient = ClientThread(conn, addr, name)
-
-# moderator can manually close the socket before stoping the server
-def stop():
-    sock.close()
